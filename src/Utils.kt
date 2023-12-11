@@ -32,3 +32,5 @@ fun time(code: () -> Unit) {
         println("$it ms")
     }
 }
+
+data class TreeNode<T>(val value: T, var left: TreeNode<T>?, var right: TreeNode<T>?)
