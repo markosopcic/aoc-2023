@@ -43,11 +43,14 @@ fun solve(expand: Int) {
         val lowerY = min(it.first.y, it.second.y)
         val upperY = max(it.first.y, it.second.y)
 
-        val distance = upperX - lowerX + upperY - lowerY  + duplicateCols.between(lowerX,upperX) * (expand - 1) + duplicateRows.between(lowerY, upperY) * (expand - 1)
+        val distance = upperX - lowerX + upperY - lowerY + duplicateCols.between(
+            lowerX,
+            upperX
+        ) * (expand - 1) + duplicateRows.between(lowerY, upperY) * (expand - 1)
 
 
         distance
-    }.map { it.toLong() }.sum().println()
+    }.sumOf { it.toLong() }.println()
 }
 
 fun List<Int>.between(lower: Int, upper: Int) = count { it in (lower + 1)..<upper }
