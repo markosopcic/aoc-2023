@@ -53,13 +53,31 @@ fun Table.findNeighbors(x: Int, y: Int): List<Pair<XY, Char>> {
 }
 
 fun Table.print(colorFunction: ((Char) -> Color?)? = null) {
-    for(line in this){
-        for(char in line){
+    for (line in this) {
+        for (char in line) {
             val color = colorFunction?.invoke(char)
-            if(color != null){
+            if (color != null) {
                 print("${color.ansi}$char${Color.Reset.ansi}")
             } else print(char)
         }
         kotlin.io.println()
     }
 }
+
+fun Table.transpose(): Table {
+    if (isEmpty() || this[0].isEmpty()) {
+        return emptyArray()
+    }
+
+    val numRows = size
+    val numCols = this[0].size
+
+    return Array(numCols) { col ->
+        CharArray(numRows) { row ->
+            this[row][col]
+        }
+    }
+}
+
+fun Table.find(condition: (XY, Char) -> Boolean) =
+    indices.flatMap { y -> this[0].indices.map { XY(it, y) } }.filter { condition(it, this[it.y][it.x]) }
