@@ -1,5 +1,7 @@
 import Side.*
+
 fun main() {
+    time { d14p1() }
     time {
         d14p2()
     }
@@ -7,36 +9,56 @@ fun main() {
 
 
 fun d14p1() {
-    val input = readInput("day14").map { it.toCharArray() }.toTypedArray().transpose()
-    input.map {
-        it.joinToString("").split("#")
-            .joinToString("#") {
-                it.toCharArray().sortedArrayDescending().joinToString("")
-            }.toCharArray()
-    }.toTypedArray().also { it.print() }.withIndex().flatMap { row ->
+    val input = readInput("day14").map { it.toCharArray() }.toTypedArray()
+    input.cycle(North).withIndex().flatMap { row ->
         row.value.withIndex().map { XY(it.index, row.index) to it.value }
     }.filter {
         it.second == 'O'
     }.sumOf {
-        (input.size - it.first.x)
+        (input.size - it.first.y)
     }.println()
 }
 
 fun d14p2() {
     var input = readInput("day14").map { it.toCharArray() }.toTypedArray()
+    val limit = 1000000000
 
-    repeat(10000000) {
-        repeat(4) {
-            input = input.cycle(Side.entries[it % 4])
+    val map = mutableMapOf<String, Long>()
+
+    var cyclesUntilRepeat = 0
+    while (input.findAllCircleIndices() !in map) {
+        cyclesUntilRepeat++
+        map[input.findAllCircleIndices()] = cyclesUntilRepeat.toLong()
+        for (x in 0 until 4) {
+            input = input.cycle(Side.entries[x % 4])
         }
     }
 
-    input.transpose().withIndex().flatMap { row ->
+    var cycleLength = 0
+    val cycleMap = mutableMapOf<String, Long>()
+    while (input.findAllCircleIndices() !in cycleMap) {
+        cycleLength++
+        cycleMap[input.findAllCircleIndices()] = cycleLength.toLong()
+        map[input.findAllCircleIndices()] = cyclesUntilRepeat.toLong()
+        for (x in 0 until 4) {
+            input = input.cycle(Side.entries[x % 4])
+        }
+    }
+
+    val leftOverSteps = (limit - cyclesUntilRepeat) % cycleLength
+
+    repeat(leftOverSteps) {
+        for (x in 0 until 4) {
+            input = input.cycle(Side.entries[x % 4])
+        }
+    }
+
+    input.withIndex().flatMap { row ->
         row.value.withIndex().map { XY(it.index, row.index) to it.value }
     }.filter {
         it.second == 'O'
     }.sumOf {
-        (input.size - it.first.x)
+        (input.size - it.first.y)
     }.println()
 }
 
@@ -109,4 +131,7 @@ fun Table.cycle(side: Side): Table {
     return this
 }
 
-fun Table.findAllCircleIndices() = indices.flatMap { y-> this[0].indices.filter { x-> this[y][x] == 'O' } }
+fun Table.findAllCircleIndices() =
+    indices.flatMap { y -> this[0].indices.filter { x -> this[y][x] == 'O' }.map { it to y } }.map {
+        "${it.first}-${it.second}"
+    }.joinToString(",")
