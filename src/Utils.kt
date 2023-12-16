@@ -58,3 +58,7 @@ fun CharArray.diffIndices(other: CharArray): List<Int> {
 
     return indices.filter { this[it] != other[it] }
 }
+
+enum class Direction {
+    Up, Down, Left, Right
+}

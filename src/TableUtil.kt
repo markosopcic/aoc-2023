@@ -1,3 +1,5 @@
+import Direction.*
+
 data class XY(val x: Int, val y: Int)
 
 fun XY.isAbove(other: XY) = this.y < other.y
@@ -9,6 +11,13 @@ fun XY.isLeftOf(other: XY) = this.x < other.x
 fun XY.isRightOf(other: XY) = this.x > other.x
 
 typealias Table = Array<CharArray>
+
+fun Table.toDirectionOf(direction: Direction, point: XY) = when (direction) {
+    Up -> this.above(point)
+    Down -> below(point)
+    Left -> leftOf(point)
+    Right -> rightOf(point)
+}
 
 fun Table.leftOf(point: XY) =
     XY(point.x - 1, point.y).takeIf(::isInside)
@@ -81,3 +90,5 @@ fun Table.transpose(): Table {
 
 fun Table.find(condition: (XY, Char) -> Boolean) =
     indices.flatMap { y -> this[0].indices.map { XY(it, y) } }.filter { condition(it, this[it.y][it.x]) }
+
+operator fun Table.get(point: XY) = this[point.y][point.x]
