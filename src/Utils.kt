@@ -60,5 +60,13 @@ fun CharArray.diffIndices(other: CharArray): List<Int> {
 }
 
 enum class Direction {
-    Up, Down, Left, Right
+    Up, Down, Left, Right;
+
+    val oposite
+        get() = when(this){
+            Up -> Down
+            Down -> Up
+            Left -> Right
+            Right -> Left
+        }
 }
