@@ -1,5 +1,3 @@
-import kotlin.math.abs
-
 fun main() {
     time {
         solve(false)
@@ -10,23 +8,10 @@ fun main() {
     }
 }
 
-data class Line(val vertical: Boolean, val sX: Int, val sY: Int, val eX: Int, val eY: Int) {
-    fun length() = if (vertical) abs(eY - sY) else abs(eX - sX)
-}
-
-fun XY.pointInsidePolygon(polygon: List<Line>): Boolean {
-    val on = polygon.any {
-        (it.vertical && x == it.sX && y in it.sY..it.eY) || (!it.vertical && y == it.sY && x in it.sX..it.eX)
-    }
-    if (on) return true
-    return polygon.filter { it.vertical && x <= it.sX }.count { y in it.sY..it.eY } % 2 == 1
-}
-
 fun solve(part2: Boolean) {
     val input = readInput("day18")
-    val lines = mutableListOf<Line>()
     var xy = XY(0, 0)
-    var points = mutableListOf<XY>()
+    val points = mutableListOf<XY>()
     for (line in input) {
         val parts = line.split(" ")
         val color = parts[2].trimStart('(').trimEnd(')').trimStart('#')
